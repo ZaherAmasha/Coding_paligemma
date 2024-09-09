@@ -250,3 +250,15 @@ class SiglipVisionTransformer(nn.Module):
         last_hidden_state = self.post_layernorm(last_hidden_state)
 
         return last_hidden_state
+
+
+class SiglipVisionModel(nn.Module):
+
+    def __init__(self, config: SiglipVisionConfig):
+        super().__init__()
+        self.config = config
+        self.vision_model = SiglipVisionTransformer(config)
+
+    def forward(self, pixel_values: torch.Tensor) -> Tuple:
+        # [Batch_Size, Channels, Height, Width] -> [Batch_Size, Num_Patches, Embed_Dim]
+        return self.vision_model(pixel_values=pixel_values)
