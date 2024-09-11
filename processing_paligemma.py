@@ -34,7 +34,7 @@ def resize(
 ) -> np.ndarray:
     height, width = size
     resized_image = image.resize(
-        (width, height), resample=resample, reducting_gap=reducing_gap
+        (width, height), resample=resample, reducing_gap=reducing_gap
     )
     return resized_image
 

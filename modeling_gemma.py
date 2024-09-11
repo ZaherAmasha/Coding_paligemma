@@ -9,8 +9,8 @@ from modeling_siglip import SiglipVisionConfig, SiglipVisionModel
 class KVCache:
 
     def __init__(self) -> None:
-        self.key_cache = List[torch.Tensor] = []
-        self.value_cache = List[torch.Tensor] = []
+        self.key_cache: List[torch.Tensor] = []
+        self.value_cache: List[torch.Tensor] = []
 
     def num_items(self) -> int:
         if len(self.key_cache) == 0:
@@ -636,25 +636,25 @@ class PaliGemmaForConditionalGeneration(nn.Module):
 
         # 1. Extra the input embeddings
         # shape: [Batch_Size, Seq_Len, Hidden_Size]
-        input_embeds = self.language_model.get_input_embeddings()(input_ids)
+        inputs_embeds = self.language_model.get_input_embeddings()(input_ids)
 
         # 2. Merge text and images
         # [Batch_Size, Channels, Height, Width] -> [Batch_Size, Num_Patches, Embed_Dim]
-        selected_image_feature = self.vision_tower(pixel_values.to(input_embeds.dtype))
+        selected_image_feature = self.vision_tower(pixel_values.to(inputs_embeds.dtype))
         # [Batch_Size, Num_Patches, Embed_Dim] -> [Batch_Size, Num_Patches, Hidden_Size]
         image_features = self.multi_modal_projector(selected_image_feature)
 
         # Merget the embeddings of the text tokens and the image tokens
-        input_embeds, attention_mask, position_ids = (
+        inputs_embeds, attention_mask, position_ids = (
             self._merge_input_ids_with_image_features(
-                image_features, input_embeds, input_ids, attention_mask, kv_cache
+                image_features, inputs_embeds, input_ids, attention_mask, kv_cache
             )
         )
 
         outputs = self.language_model(
             attention_mask=attention_mask,
             position_ids=position_ids,
-            input_embeds=input_embeds,
+            inputs_embeds=inputs_embeds,
             kv_cache=kv_cache,
         )
 

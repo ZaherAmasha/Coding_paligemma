@@ -59,23 +59,23 @@ class SiglipVisionEmbeddings(nn.Module):
             persistent=False,
         )
 
-        def forward(self, pixel_values: torch.FloatTensor) -> torch.Tensor:
-            _, _, height, width = (
-                pixel_values.shape
-            )  # [Batch_Size, Channels, Height, Width]
-            # Convolve the 'patch_size' kernel over the image, with no overlapping patches since the stride is equal to the kernel size
-            # The output of the convolution will have shape [Batch_Size, Embed_Dim, Num_Patches_H, Num_Patches_W]
-            # where Num_Patches_H = height // patch_size and Num_Patches_W = width // patch_size
-            patch_embeds = self.patch_embedding(pixel_values)
-            # [Batch_Size, Embed_Dim, Num_Patches_H, Num_Patches_W] -> [Batch_Size, Embed_Dim, Num_Patches]
-            # where Num_Patches = Num_Patches_H * Num_Patches_W
-            embeddings = patch_embeds.flatten(2)
-            # [Batch_Size, Embed_Dim, Num_Patches] -> [Batch_Size, Num_Patches, Embed_Dim]
-            embeddings = embeddings.transpose(1, 2)
-            # Add position embeddings to each patch. Each position encoding is a vector of size [Embed_Dim]
-            embeddings = embeddings + self.position_embedding(self.position_ids)
-            # [Batch_Size, Num_Patches, Embed_Dim]
-            return embeddings
+    def forward(self, pixel_values: torch.FloatTensor) -> torch.Tensor:
+        _, _, height, width = (
+            pixel_values.shape
+        )  # [Batch_Size, Channels, Height, Width]
+        # Convolve the 'patch_size' kernel over the image, with no overlapping patches since the stride is equal to the kernel size
+        # The output of the convolution will have shape [Batch_Size, Embed_Dim, Num_Patches_H, Num_Patches_W]
+        # where Num_Patches_H = height // patch_size and Num_Patches_W = width // patch_size
+        patch_embeds = self.patch_embedding(pixel_values)
+        # [Batch_Size, Embed_Dim, Num_Patches_H, Num_Patches_W] -> [Batch_Size, Embed_Dim, Num_Patches]
+        # where Num_Patches = Num_Patches_H * Num_Patches_W
+        embeddings = patch_embeds.flatten(2)
+        # [Batch_Size, Embed_Dim, Num_Patches] -> [Batch_Size, Num_Patches, Embed_Dim]
+        embeddings = embeddings.transpose(1, 2)
+        # Add position embeddings to each patch. Each position encoding is a vector of size [Embed_Dim]
+        embeddings = embeddings + self.position_embedding(self.position_ids)
+        # [Batch_Size, Num_Patches, Embed_Dim]
+        return embeddings
 
 
 class SiglipAttention(nn.Module):
@@ -245,7 +245,7 @@ class SiglipVisionTransformer(nn.Module):
         # pixel_values: [Batch_Size, Channels, Height, Width] -> [Batch_size, Num_Patches, Embed_Dim]
         hidden_states = self.embeddings(pixel_values)
 
-        last_hidden_state = self.encoder(input_embeds=hidden_states)
+        last_hidden_state = self.encoder(inputs_embeds=hidden_states)
 
         last_hidden_state = self.post_layernorm(last_hidden_state)
 
