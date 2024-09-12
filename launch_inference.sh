@@ -1,7 +1,7 @@
 #!/bin/bash
 MODEL_PATH="/home/zaher/Open_Source_Models/paligemma-3b-pt-224"
 # MODEL_PATH="$HOME/projects/paligemma-weights/paligemma-3b-pt-224"
-PROMPT="Describe this image"
+PROMPT="This is an image of a "
 IMAGE_FILE_PATH="test_images/pic1.jpeg" # it appears that .png doesn't work
 MAX_TOKENS_TO_GENERATE=100
 TEMPERATURE=0.8

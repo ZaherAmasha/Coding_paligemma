@@ -44,9 +44,9 @@ class SiglipVisionEmbeddings(nn.Module):
 
         self.patch_embedding = nn.Conv2d(
             in_channels=config.num_channels,
-            out_channels=config.hidden_size,
-            kernel_size=config.patch_size,
-            stride=config.patch_size,
+            out_channels=self.embed_dim,
+            kernel_size=self.patch_size,
+            stride=self.patch_size,
             padding="valid",  # this indicates no padding is added
         )
 
@@ -207,6 +207,7 @@ class SiglipEncoderLayer(nn.Module):
         # [Batch_Size, Num_Patches, Embed_Dim] -> [Batch_Size, Num_Patches, Embed_Dim]
         hidden_states = self.mlp(hidden_states)
         # [Batch_Size, Num_Patches, Embed_Dim]
+        hidden_states = residual + hidden_states
 
         return hidden_states
 

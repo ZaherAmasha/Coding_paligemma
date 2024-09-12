@@ -69,7 +69,7 @@ def process_images(
     # Normalize the images to have mean 0 and standard deviation 1
     images = [normalize(image, mean=image_mean, std=image_std) for image in images]
     # Move the channel dimension to the first dimension. The model expects images in the format [Channel, Height, Width]
-    images = [image.transpose((2, 0, 1)) for image in images]
+    images = [image.transpose(2, 0, 1) for image in images]
     return images
 
 
